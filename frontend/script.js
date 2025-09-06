@@ -66,57 +66,98 @@ function askPassword(action, index) {
 // ==== BUYURTMA SAHIFASI (buyurtma.html) ====
 let anketaForm = document.getElementById("anketaForm");
 if (anketaForm) {
-  anketaForm.addEventListener("submit", function (e) {
+  anketaForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    
     const formData = new FormData(this);
     let data = {};
     formData.forEach((v, k) => data[k] = v);
 
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-    orders.push(data);
-    localStorage.setItem("orders", JSON.stringify(orders));
-
-    alert("✅ Anketa Adminga yuborildi!");
-    this.reset();
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert("✅ Anketa muvaffaqiyatli yuborildi!");
+        this.reset();
+      } else {
+        alert("❌ Xatolik yuz berdi: " + (result.error || 'Noma\'lum xatolik'));
+      }
+    } catch (error) {
+      console.error('Xatolik:', error);
+      alert("❌ Server bilan bog'lanishda xatolik yuz berdi!");
+    }
   });
 }
 
 
 // ==== ADMIN SAHIFASIDA BUYURTMALAR ====
-function loadOrders() {
+async function loadOrders() {
   let orderList = document.getElementById("orderList");
   if (!orderList) return;
 
-  orderList.innerHTML = "";
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-  if (orders.length === 0) {
-    orderList.innerHTML = "<p class='text-muted'>Hali buyurtmalar yo‘q.</p>";
-  } else {
-    orders.forEach((o, i) => {
-      let item = document.createElement("div");
-      item.className = "list-group-item mb-2";
-      item.innerHTML = `
-        <h5>${i + 1}) ${o.ism} (${o.yosh} yosh)</h5>
-        <p><b>Sana:</b> ${o.tugilgan_sana}</p>
-        <p><b>Tel:</b> ${o.telefon}</p>
-        <p><b>Tabriklovchilar:</b> ${o.tabriklovchilar}</p>
-        <p><b>Asosiy:</b> ${o.asosiy}</p>
-        <p><b>Murojaat:</b> ${o.murojaat}</p>
-        <p><b>Qo‘shiq:</b> ${o.qoshiq}</p>
-        <button class="btn btn-sm btn-danger mt-2" onclick="deleteOrder(${i})">🗑️ O‘chirish</button>
-      `;
-      orderList.appendChild(item);
-    });
+  orderList.innerHTML = "<p class='text-muted'>Yuklanmoqda...</p>";
+  
+  try {
+    const response = await fetch('/api/orders');
+    const orders = await response.json();
+    
+    orderList.innerHTML = "";
+    
+    if (orders.length === 0) {
+      orderList.innerHTML = "<p class='text-muted'>Hali buyurtmalar yo'q.</p>";
+    } else {
+      orders.forEach((o, i) => {
+        let item = document.createElement("div");
+        item.className = "list-group-item mb-2";
+        const sana = new Date(o.tugilgan_sana).toLocaleDateString('uz-UZ');
+        const yaratilgan = new Date(o.createdAt).toLocaleString('uz-UZ');
+        
+        item.innerHTML = `
+          <h5>${i + 1}) ${o.ism} (${o.yosh} yosh)</h5>
+          <p><b>Tug'ilgan sana:</b> ${sana}</p>
+          <p><b>Telefon:</b> ${o.telefon}</p>
+          <p><b>Tabriklovchilar:</b> ${o.tabriklovchilar}</p>
+          <p><b>Asosiy tabriklovchi:</b> ${o.asosiy}</p>
+          <p><b>Murojaat turi:</b> ${o.murojaat}</p>
+          <p><b>Qo'shiq:</b> ${o.qoshiq}</p>
+          <p><b>Buyurtmachi telefoni:</b> ${o.buyurtmachi_telefon}</p>
+          <p><small class='text-muted'>Yaratilgan: ${yaratilgan}</small></p>
+          <button class="btn btn-sm btn-danger mt-2" onclick="deleteOrder('${o._id}')">🗑️ O'chirish</button>
+        `;
+        orderList.appendChild(item);
+      });
+    }
+  } catch (error) {
+    console.error('Buyurtmalarni yuklashda xatolik:', error);
+    orderList.innerHTML = "<p class='text-danger'>Buyurtmalarni yuklashda xatolik yuz berdi!</p>";
   }
 }
 
-function deleteOrder(index) {
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
-  if (confirm("Bu buyurtmani o‘chirishni xohlaysizmi?")) {
-    orders.splice(index, 1);
-    localStorage.setItem("orders", JSON.stringify(orders));
-    loadOrders();
+async function deleteOrder(id) {
+  if (confirm("Bu buyurtmani o'chirishni xohlaysizmi?")) {
+    try {
+      const response = await fetch(`/api/orders/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        alert("✅ Buyurtma o'chirildi!");
+        loadOrders(); // Ro'yxatni yangilash
+      } else {
+        alert("❌ O'chirishda xatolik yuz berdi!");
+      }
+    } catch (error) {
+      console.error('O\'chirishda xatolik:', error);
+      alert("❌ Server bilan bog'lanishda xatolik!");
+    }
   }
 }
 

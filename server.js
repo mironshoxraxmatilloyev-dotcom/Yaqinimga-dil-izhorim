@@ -21,9 +21,15 @@ mongoose.connect("mongodb://127.0.0.1:27017/tabrikDB", {
 
 // ====== Schema & Model ======
 const OrderSchema = new mongoose.Schema({
-  name: String,
-  phone: String,
-  message: String,
+  ism: String,
+  yosh: Number,
+  tugilgan_sana: Date,
+  telefon: String,
+  tabriklovchilar: String,
+  asosiy: String,
+  murojaat: String,
+  qoshiq: String,
+  buyurtmachi_telefon: String,
   createdAt: { type: Date, default: Date.now }
 });
 
