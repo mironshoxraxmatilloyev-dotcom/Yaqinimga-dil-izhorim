@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: tabrik-xizmati
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: tabrik-db
+          property: connectionString
+
+databases:
+  - name: tabrik-db
+    databaseName: tabriklar
+    user: tabrik_user
+    plan: free

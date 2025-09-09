@@ -1,18 +1,25 @@
 {
   "name": "tabrik",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Tabrik Xizmati",
   "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mongoose": "^8.18.0"
+    "express-session": "^1.18.2",
+    "mongoose": "^8.18.1"
   },
-  "description": ""
+  "description": "Tabrik Xizmati - Professional greeting service website"
 }

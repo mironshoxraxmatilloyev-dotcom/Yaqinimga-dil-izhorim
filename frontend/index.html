@@ -2,46 +2,629 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <title>Bosh sahifa</title>
-  <link rel="stylesheet" href="./style.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabrik Xizmati - Bosh sahifa</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+/* ===============================
+   TABRIK XIZMATI - BEAUTIFUL STYLES
+   =============================== */
+
+/* === ROOT VARIABLES === */
+:root {
+  --primary-color: #dc3545;
+  --primary-dark: #b02a37;
+  --primary-light: #f8d7da;
+  --secondary-color: #28a745;
+  --accent-color: #ffc107;
+  --text-dark: #212529;
+  --text-muted: #6c757d;
+  --background-light: #f8f9fa;
+  --white: #ffffff;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+  --border-radius: 12px;
+  --border-radius-lg: 20px;
+  --transition: all 0.3s ease;
+}
+
+/* === GLOBAL STYLES === */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  min-height: 100vh;
+  padding: 20px;
+  margin: 0;
+}
+
+/* === CONTAINER STYLES === */
+.box {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease;
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--secondary-color));
+}
+
+/* === NAVBAR STYLES === */
+.navbar {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius) !important;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  transition: var(--transition);
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+  color: var(--accent-color) !important;
+}
+
+.nav-link {
+  font-weight: 500;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  position: relative;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+  color: var(--accent-color) !important;
+}
+
+.nav-link.active {
+  background: var(--accent-color) !important;
+  color: var(--text-dark) !important;
+  font-weight: 600;
+}
+
+/* === HEADINGS === */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h2 {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2.5rem;
+}
+
+h3 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  position: relative;
+  display: inline-block;
+}
+
+h3::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  border-radius: 2px;
+}
+
+/* === BUTTONS === */
+.btn {
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: var(--border-radius);
+  border: none;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: var(--transition);
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--secondary-color), #218838);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-success:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #218838, var(--secondary-color));
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+  animation: pulse 2s infinite;
+}
+
+.btn-lg {
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+}
+
+/* === CARDS & SECTIONS === */
+.border {
+  border: none !important;
+  background: var(--white);
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  position: relative;
+}
+
+.bg-light {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+}
+
+.rounded {
+  border-radius: var(--border-radius) !important;
+}
+
+.shadow {
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* === ALERTS === */
+.alert {
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border-left: 4px solid var(--accent-color);
+  color: #856404;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #d1ecf1, #a8e6cf);
+  border-left: 4px solid #17a2b8;
+  color: #0c5460;
+}
+
+/* === MEDIA CONTENT === */
+#mediaContent {
+  background: linear-gradient(135deg, var(--white), #f8f9fa);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin: 2rem 0;
+  min-height: 200px;
+}
+
+/* umumiy b class */
+.b {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+/* === TABRIKLAR GRID === */
+#tabrikList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Desktopda 3 ta */
+  gap: 20px;
+  align-items: stretch; /* hamma kartochka bir balandlikda */
+  transform: translateY(-10px);
+}
+
+#tabrikList .border {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  border-radius: var(--border-radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-md); /* doimiy soyasi bor */
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#tabrikList .border:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg); /* hoverda kuchliroq */
+}
+
+/* Tablet (<= 992px) */
+@media (max-width: 992px) {
+  #tabrikList {
+    grid-template-columns: repeat(2, 1fr); /* 2 ta */
+  }
+}
+
+/* Telefon (<= 576px) */
+@media (max-width: 576px) {
+  #tabrikList {
+    grid-template-columns: 1fr; /* 1 ta */
+  }
+}
+
+
+
+/* === ANIMATIONS === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+  }
+}
+
+/* === TEXT STYLES === */
+.text-danger {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-success {
+  background: linear-gradient(135deg, var(--secondary-color), #20c997);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-info {
+  background: linear-gradient(135deg, #17a2b8, #20c997);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.lead {
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* === HERO SECTION === */
+.hero-section {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(255, 193, 7, 0.1));
+  padding: 3rem 2rem;
+  border-radius: var(--border-radius-lg);
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    div {
+    margin: 20px;
+  }
+  .box {
+    margin: 1rem;
+    border-radius: var(--border-radius);
+  }
+  
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-toggler {
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 0.5rem;
+  }
+  
+  .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.25);
+  }
+  
+  .navbar-collapse {
+    margin-top: 1rem;
+    background: rgba(0,0,0,0.1);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  div {
+    margin: 20px;
+  }
+  body {
+    padding: 10px;
+  }
+  
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+  
+  .box {
+    border-radius: var(--border-radius);
+    margin: 0;
+  }
+}
+
+/* === FLOATING ELEMENTS === */
+.floating-emoji {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-emoji:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: -2s;
+}
+
+.floating-emoji:nth-child(2) {
+  top: 60%;
+  right: 15%;
+  animation-delay: -4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+  </style>
 </head>
 <body class="a">
   <div class="box p-4">
-    <h1 class="ism">🎉 Tabrik Xizmati</h1>
-    <nav class="mb-4" style="display: flex; justify-content: center;">
-      <button class="btn btn-danger m-1" style="font-size: 11px;" id="homeBtn">Bosh sahifa</button>
-      <button class="btn btn-danger m-1" style="font-size: 11px;" id="orderBtn">Buyurtma berish</button>
-      <button class="btn btn-danger m-1" style="font-size: 11px;" id="adminBtn">Admin sahifasi</button>
-      <button class="btn btn-danger m-1" style="font-size: 11px;" id="aboutBtn">Biz haqimizda</button>
-      <button class="btn btn-danger m-1" style="font-size: 11px;" id="haveBtn">Bizda mavjud Xizmatlar</button>
-    </nav>
+    <!-- Floating emojis for decoration -->
+    <div class="floating-emoji">🎉</div>
+    <div class="floating-emoji">🎵</div>
+    
+    <!-- === Navbar === -->
+   <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-danger rounded">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="index.html">🎉 Tabrik Xizmati</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+       <li class="nav-item"><a class="nav-link active" href="index.html">Bosh sahifa</a></li>
+            <li class="nav-item"><a class="nav-link" href="buyurtma.html">Buyurtma berish</a></li>
+            <li class="nav-item"><a class="nav-link" href="admin.html">Admin sahifasi</a></li>
+            <li class="nav-item"><a class="nav-link" href="bizhaqimizda.html">Biz haqimizda</a></li>
+            <li class="nav-item"><a class="nav-link" href="bizdamavjudxizmatlar.html">Bizda mavjud xizmatlar</a></li>
+          </ul>
+    </div>
+  </div>
+</nav>
+
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h2 class="mb-4">🎊 Xush kelibsiz!</h2>
+        <p class="lead">
+          Sevimli insonlaringizni professional tabriklar bilan xursand qiling! 
+          Har bir tabrik - yurakdan kelgan samimiy so'zlar va chiroyli musiqiy fon bilan.
+        </p>
+<a href="buyurtma.html" class="btn btn-danger btn-lg">
+  📲 Hozroq buyurtma bering
+</a>
+
+      </div>
+    </div>
 
     <!-- Admin yuborgan media (matn + audio) chiqadigan joy -->
-    <h3 class="mt-4" style="display: flex; justify-content: center;">🎶 Tabriklar</h3>
-    <div id="mediaContent" class="mt-3 b"></div>
-  </div>
+    <h3 class="mt-4 text-center">🎶 So'nggi Tabriklar</h3>
+    <div id="tabrikList" class="mt-3 b">
+      <div class="text-center py-5">
+        <div class="mb-4">
+          <span style="font-size: 4rem; opacity: 0.3;">🎵</span>
+        </div>
+        <h5 class="text-muted">Hozircha tabriklar mavjud emas</h5>
+        <p class="text-muted">Admin tomonidan yuborilgan tabriklar bu yerda ko'rsatiladi</p>
+      </div>
+    </div>
 
-  <!-- Admin parol soraydigan modal -->
-  <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content p-3">
-        <h5>🔑 Admin parolni kiriting</h5>
-        <input type="password" id="adminPassword" class="form-control mt-2" placeholder="Parol">
-        <button class="btn btn-danger mt-3" id="checkPasswordBtn">Tasdiqlash</button>
+    <!-- Services Preview -->
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <div class="border p-4 text-center h-100">
+          <h4 class="text-success mb-3">💰 Narxlarimiz</h4>
+          <div class="display-4 text-danger fw-bold mb-2">40,000</div>
+          <p class="text-muted">so'm / har bir tabrik</p>
+          <small class="text-muted">Professional sifat kafolatlanadi</small>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border p-4 text-center h-100">
+          <h4 class="text-info mb-3">📞 Bog'lanish</h4>
+          <div class="mb-2">
+            <strong>+998 50 502 08 40</strong>
+          </div>
+          <div class="mb-2">
+            <a href="https://t.me/Muhiddinovna0840" target="_blank" class="text-decoration-none">
+              📱 @Muhiddinovna0840
+            </a>
+          </div>
+          <small class="text-muted">24/7 onlayn yordam</small>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./script.js"></script>
+
   <script>
-    // Sahifa yuklanganda tabriklarni chiqarish
-    document.addEventListener("DOMContentLoaded", loadMedia);
-  </script>
+  // API dan tabriklarni yuklash
+  async function loadTabriklar() {
+    const tabrikList = document.getElementById('tabrikList');
+    if (!tabrikList) return;
+
+    try {
+      const res = await fetch('/api/tabriklar');
+      const tabriklar = await res.json();
+
+      tabrikList.innerHTML = '';
+
+      if (!tabriklar.length) {
+        tabrikList.innerHTML = `
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <span style="font-size: 4rem; opacity: 0.3;">🎵</span>
+            </div>
+            <h5 class="text-muted">Hozircha tabriklar mavjud emas</h5>
+            <p class="text-muted">Admin tomonidan yuborilgan tabriklar bu yerda ko'rsatiladi</p>
+          </div>
+        `;
+        return;
+      }
+
+      tabriklar.forEach(t => {
+        tabrikList.innerHTML += `
+          <div class="border p-3 mb-2 rounded">
+            ${t.matn ? `<p>📝 ${t.matn}</p>` : ""}
+            ${t.audio ? `<audio controls src="${t.audio}" class="w-100 mt-2"></audio>` : ""}
+          </div>
+        `;
+      });
+    } catch (err) {
+      console.error('❌ Tabriklarni yuklashda xato:', err);
+      tabrikList.innerHTML = `
+        <div class="text-center py-5">
+          <div class="mb-4">
+            <span style="font-size: 4rem; opacity: 0.3;">❌</span>
+          </div>
+          <h5 class="text-muted">Serverga ulanishda xato</h5>
+          <p class="text-muted">Iltimos sahifani yangilang</p>
+        </div>
+      `;
+    }
+  }
+
+  // Sahifa yuklanganda tabriklarni yuklash
+  document.addEventListener('DOMContentLoaded', loadTabriklar);
+
+  // Har 10 soniyada yangi tabriklarni tekshirish
+  setInterval(loadTabriklar, 10000);
+</script>
+  
+  
 </body>
 </html>
-
-
-
-

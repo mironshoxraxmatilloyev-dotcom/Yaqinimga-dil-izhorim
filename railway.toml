@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  web:
+    source:
+      repo: your-username/tabrik-xizmati
+    build:
+      command: npm install
+    start:
+      command: npm start
+    variables:
+      NODE_ENV: production
+    
+  mongodb:
+    image: mongo:latest
+    variables:
+      MONGO_INITDB_DATABASE: tabriklar

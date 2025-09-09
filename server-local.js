@@ -3,69 +3,36 @@ const mongoose = require("mongoose");
 const path = require("path");
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
-// === MongoDB Atlasga ulanish ===
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://mironshoxraxmatilloyev_db_user:N9S6UB0otf3L3XV2@cluster0.2jbh9b2.mongodb.net/tabriklar";
-// Alternative local MongoDB: "mongodb://localhost:27017/tabriklar"
+// === Local MongoDB ulanish ===
+const MONGODB_URI = "mongodb://localhost:27017/tabriklar";
 
-console.log('🔗 MongoDB ulanishini boshlayapman...');
-console.log(`🌍 URI: ${MONGODB_URI.replace(/:\/\/.*@/, '://***:***@')}`);
+console.log('🔗 Local MongoDB ga ulanishni sinayapman...');
 
-mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000, // 5 soniya timeout
-  socketTimeoutMS: 45000, // Socket timeout
-})
+mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log("✅ MongoDB ga muvaffaqiyatli ulandi");
+    console.log("✅ Local MongoDB ga ulandi");
     console.log(`📊 Database: ${mongoose.connection.db.databaseName}`);
-    console.log(`🌍 Host: ${mongoose.connection.host}`);
   })
   .catch(err => {
-    console.error("❌ MongoDB ulanish xatosi:", err.message);
-    console.error("🔧 Tekshiring:");
-    console.error("   1. Internet ulanishi");
-    console.error("   2. Login/parol to'g'riligi");
-    console.error("   3. IP whitelist (0.0.0.0/0 qo'shilganmi?)");
-    console.error("   4. Database 'tabriklar' mavjudmi?");
-    console.error("📝 Agar Atlas ishlamasa, local MongoDB ishlatishni sinab ko'ring");
+    console.error("❌ Local MongoDB ulanish xatosi:", err.message);
+    console.error("💡 Local MongoDB o'rnatilganmi? 'mongod' servisi ishga tushirilganmi?");
+    console.error("💡 Agar MongoDB o'rnatilmagan bo'lsa, test server ishlatishni tavsiya qilamiz:");
+    console.error("    node server-test.js");
   });
 
-// === Mongoose hodisalarini kuzatish ===
-mongoose.connection.on('connected', () => {
-  console.log('🔗 Mongoose MongoDB ga ulandi');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose ulanish xatosi:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('🔌 Mongoose MongoDB dan uzildi');
-});
-
 // === Middleware ===
-app.use(express.json({ limit: '50mb' })); // JSON size limit oshirdik
-app.use(express.urlencoded({ extended: true, limit: '50mb' })); // URL encoded data
-app.use(express.static(path.join(__dirname, "frontend"))); // frontend papkani statik qilib uladik
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.static(path.join(__dirname, "frontend")));
 
-// Request logging middleware
+// Request logging
 app.use((req, res, next) => {
-  const timestamp = new Date().toISOString();
-  console.log(`🚀 ${req.method} ${req.path} - ${timestamp}`);
-  console.log(`🔍 Headers:`, JSON.stringify(req.headers, null, 2));
+  console.log(`🚀 ${req.method} ${req.path} - ${new Date().toISOString()}`);
   if (req.body && Object.keys(req.body).length > 0) {
     console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
   }
-  
-  // Response logging
-  const originalSend = res.send;
-  res.send = function(data) {
-    console.log(`📤 Response Status: ${res.statusCode}`);
-    console.log(`📤 Response Data:`, typeof data === 'string' ? data.substring(0, 200) : data);
-    originalSend.call(this, data);
-  };
-  
   next();
 });
 
@@ -87,30 +54,31 @@ const OrderSchema = new mongoose.Schema({
   buyurtmachi_telefon: { type: String, required: true },
 }, { 
   timestamps: true,
-  collection: 'orders' // Collection nomini aniq belgilaymiz
+  collection: 'orders'
 });
 
 const Order = mongoose.model("Order", OrderSchema);
 
 const TabrikSchema = new mongoose.Schema({
   matn: { type: String, trim: true },
-  audio: { type: String }, // Base64 audio data
+  audio: { type: String },
   sana: { type: Date, default: Date.now }
 }, {
-  collection: 'tabriklar' // Collection nomini aniq belgilaymiz
+  collection: 'tabriklar'
 });
+
 const Tabrik = mongoose.model("Tabrik", TabrikSchema);
 
 // ===== API yo'llar =====
 
-// Test endpoint - MongoDB ulanishini tekshirish
+// Test endpoint
 app.get("/api/test", async (req, res) => {
   try {
     const isConnected = mongoose.connection.readyState === 1;
     const dbName = mongoose.connection.db?.databaseName;
     
     res.json({
-      message: "Server ishlayapti",
+      message: "Local server ishlayapti",
       mongodbConnected: isConnected,
       database: dbName,
       timestamp: new Date().toISOString()
@@ -146,13 +114,17 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
-// Buyurtmani o‘chirish
+// Buyurtmani o'chirish
 app.delete("/api/orders/:id", async (req, res) => {
-  await Order.findByIdAndDelete(req.params.id);
-  res.json({ success: true });
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "O'chirishda xato" });
+  }
 });
 
-// Tabrik qo‘shish
+// Tabrik qo'shish
 app.post("/api/tabriklar", async (req, res) => {
   try {
     console.log("🎵 Yangi tabrik keldi:", req.body);
@@ -205,5 +177,7 @@ app.put("/api/tabriklar/:id", async (req, res) => {
 
 // === Serverni ishga tushirish ===
 app.listen(PORT, () => {
-  console.log(`🚀 Server http://localhost:${PORT} da ishlayapti`);
+  console.log(`🚀 Local server http://localhost:${PORT} da ishlayapti`);
+  console.log(`📁 Frontend files: ${path.join(__dirname, "frontend")}`);
+  console.log(`🔗 MongoDB: ${MONGODB_URI}`);
 });
