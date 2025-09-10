@@ -4,31 +4,28 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Production builds
-dist/
-build/
-
 # Environment variables
 .env
 .env.local
-.env.production
-
-# Database
-*.db
-*.sqlite
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
+logs
 *.log
-logs/
 
 # Runtime data
-pids/
+pids
 *.pid
 *.seed
 *.pid.lock
 
 # Coverage directory used by tools like istanbul
 coverage/
+
+# Backup files
+backups/
 
 # OS generated files
 .DS_Store
@@ -44,8 +41,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-*~
 
 # Temporary files
-tmp/
-temp/
+*.tmp
+*.temp

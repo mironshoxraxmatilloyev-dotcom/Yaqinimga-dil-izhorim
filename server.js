@@ -1,37 +1,44 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 const path = require("path");
+const mongoose = require("mongoose");
+require('dotenv').config();
+
 const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 5000;
+// static fayllar uchun (frontend)
+app.use(express.static(path.join(__dirname, "frontend"))); 
 
-// === MongoDB Atlasga ulanish ===
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://mironshoxraxmatilloyev_db_user:N9S6UB0otf3L3XV2@cluster0.2jbh9b2.mongodb.net/tabriklar";
-// Alternative local MongoDB: "mongodb://localhost:27017/tabriklar"
+// ====== MongoDB ulash ======
+const connectDB = async () => {
+  try {
+    // MongoDB Atlas connection string
+    const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/tabrikDB";
+    
+    const conn = await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      // Yangi Mongoose versiyasi uchun optimallashtirilgan
+    });
+    
+    console.log("✅ MongoDB muvaffaqiyatli ulandi:", conn.connection.host);
+    console.log("📊 Database:", conn.connection.name);
+  } catch (err) {
+    console.error("❌ MongoDB ulanishida xato:", err.message);
+    console.log("📝 MongoDB Atlas connection string tekshiring:");
+    console.log("   1. .env faylida MONGODB_URI ni to'g'ri sozlang");
+    console.log("   2. Database parolini tekshiring");
+    console.log("   3. Network Access da IP ruxsat berilganligini tekshiring");
+    console.log("💡 Yoki test server ishlating: node server-test.js");
+    process.exit(1);
+  }
+};
 
-console.log('🔗 MongoDB ulanishini boshlayapman...');
-console.log(`🌍 URI: ${MONGODB_URI.replace(/:\/\/.*@/, '://***:***@')}`);
+connectDB();
 
-mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000, // 5 soniya timeout
-  socketTimeoutMS: 45000, // Socket timeout
-})
-  .then(() => {
-    console.log("✅ MongoDB ga muvaffaqiyatli ulandi");
-    console.log(`📊 Database: ${mongoose.connection.db.databaseName}`);
-    console.log(`🌍 Host: ${mongoose.connection.host}`);
-  })
-  .catch(err => {
-    console.error("❌ MongoDB ulanish xatosi:", err.message);
-    console.error("🔧 Tekshiring:");
-    console.error("   1. Internet ulanishi");
-    console.error("   2. Login/parol to'g'riligi");
-    console.error("   3. IP whitelist (0.0.0.0/0 qo'shilganmi?)");
-    console.error("   4. Database 'tabriklar' mavjudmi?");
-    console.error("📝 Agar Atlas ishlamasa, local MongoDB ishlatishni sinab ko'ring");
-  });
-
-<<<<<<< HEAD
 // ====== Schema & Model ======
 const OrderSchema = new mongoose.Schema({
   ism: String,
@@ -44,181 +51,99 @@ const OrderSchema = new mongoose.Schema({
   qoshiq: String,
   buyurtmachi_telefon: String,
   createdAt: { type: Date, default: Date.now }
-=======
-// === Mongoose hodisalarini kuzatish ===
-mongoose.connection.on('connected', () => {
-  console.log('🔗 Mongoose MongoDB ga ulandi');
->>>>>>> 56b886a2d0df9e7fe45da4fa0b5066d3b316c1e1
 });
 
-mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose ulanish xatosi:', err);
+const MediaSchema = new mongoose.Schema({
+  text: String,
+  audioUrl: String,
+  createdAt: { type: Date, default: Date.now }
 });
 
-mongoose.connection.on('disconnected', () => {
-  console.log('🔌 Mongoose MongoDB dan uzildi');
+const Order = mongoose.model("Order", OrderSchema);
+const Media = mongoose.model("Media", MediaSchema);
+
+// ====== API marshrutlar ======
+
+// --- BUYURTMALAR ---
+app.get("/api/orders", async (req, res) => {
+  const orders = await Order.find().sort({ createdAt: -1 });
+  res.json(orders);
 });
 
-// === Middleware ===
-app.use(express.json({ limit: '50mb' })); // JSON size limit oshirdik
-app.use(express.urlencoded({ extended: true, limit: '50mb' })); // URL encoded data
-app.use(express.static(path.join(__dirname, "frontend"))); // frontend papkani statik qilib uladik
-
-// Request logging middleware
-app.use((req, res, next) => {
-  const timestamp = new Date().toISOString();
-  console.log(`🚀 ${req.method} ${req.path} - ${timestamp}`);
-  console.log(`🔍 Headers:`, JSON.stringify(req.headers, null, 2));
-  if (req.body && Object.keys(req.body).length > 0) {
-    console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
+app.post("/api/orders", async (req, res) => {
+  try {
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+    res.json({ message: "✅ Buyurtma qabul qilindi", order: newOrder });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  
-  // Response logging
-  const originalSend = res.send;
-  res.send = function(data) {
-    console.log(`📤 Response Status: ${res.statusCode}`);
-    console.log(`📤 Response Data:`, typeof data === 'string' ? data.substring(0, 200) : data);
-    originalSend.call(this, data);
-  };
-  
-  next();
 });
 
-// === Asosiy sahifa ===
+app.delete("/api/orders/:id", async (req, res) => {
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+    res.json({ message: "🗑️ Buyurtma o‘chirildi" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- MEDIA ---
+app.get("/api/media", async (req, res) => {
+  try {
+    const medias = await Media.find().sort({ createdAt: -1 });
+    console.log("📋 Media so'raldi:", medias.length, "ta");
+    res.json(medias);
+  } catch (err) {
+    console.error("❌ Media olishda xato:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/media", async (req, res) => {
+  try {
+    console.log("📺 Yangi media keldi:", { text: req.body.text ? 'Mavjud' : 'Yo\'q', audio: req.body.audioUrl ? 'Mavjud' : 'Yo\'q' });
+    const newMedia = new Media(req.body);
+    await newMedia.save();
+    console.log("✅ Media saqlandi:", newMedia._id);
+    res.json({ message: "✅ Media qo'shildi", media: newMedia });
+  } catch (err) {
+    console.error("❌ Media saqlashda xato:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete("/api/media/:id", async (req, res) => {
+  try {
+    await Media.findByIdAndDelete(req.params.id);
+    console.log("🗑️ Media o'chirildi:", req.params.id);
+    res.json({ message: "🗑️ Media o'chirildi" });
+  } catch (err) {
+    console.error("❌ Media o'chirishda xato:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/api/media/:id", async (req, res) => {
+  try {
+    const updatedMedia = await Media.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    console.log("✏️ Media yangilandi:", req.params.id);
+    res.json({ message: "✏️ Media yangilandi", media: updatedMedia });
+  } catch (err) {
+    console.error("❌ Media yangilashda xato:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- default route ---
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
-// ===== Mongoose modellari =====
-const OrderSchema = new mongoose.Schema({
-  ism: { type: String, required: true, trim: true },
-  yosh: { type: String, required: true },
-  tugilgan_sana: { type: String, required: true },
-  telefon: { type: String, required: true },
-  tabriklovchilar: { type: String, required: true },
-  asosiy: { type: String, required: true },
-  qoshiq: { type: String, required: true },
-  murojaat: { type: String, required: true },
-  buyurtmachi_telefon: { type: String, required: true },
-}, { 
-  timestamps: true,
-  collection: 'orders' // Collection nomini aniq belgilaymiz
+// --- serverni ishga tushirish ---
+app.listen(5000, () => {
+  console.log("🚀 Server http://localhost:5000 da ishlayapti");
 });
 
-const Order = mongoose.model("Order", OrderSchema);
 
-const TabrikSchema = new mongoose.Schema({
-  matn: { type: String, trim: true },
-  audio: { type: String }, // Base64 audio data
-  sana: { type: Date, default: Date.now }
-}, {
-  collection: 'tabriklar' // Collection nomini aniq belgilaymiz
-});
-const Tabrik = mongoose.model("Tabrik", TabrikSchema);
-
-// ===== API yo'llar =====
-
-// Test endpoint - MongoDB ulanishini tekshirish
-app.get("/api/test", async (req, res) => {
-  try {
-    const isConnected = mongoose.connection.readyState === 1;
-    const dbName = mongoose.connection.db?.databaseName;
-    
-    res.json({
-      message: "Server ishlayapti",
-      mongodbConnected: isConnected,
-      database: dbName,
-      timestamp: new Date().toISOString()
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Test xatosi: " + err.message });
-  }
-});
-
-// Buyurtma qo'shish
-app.post("/api/orders", async (req, res) => {
-  try {
-    console.log("📝 Yangi buyurtma keldi:", req.body);
-    const order = new Order(req.body);
-    const savedOrder = await order.save();
-    console.log("✅ Buyurtma saqlandi:", savedOrder._id);
-    res.json(savedOrder);
-  } catch (err) {
-    console.error("❌ Buyurtma saqlashda xato:", err.message);
-    res.status(500).json({ error: "Buyurtma saqlanmadi: " + err.message });
-  }
-});
-
-// Barcha buyurtmalarni olish
-app.get("/api/orders", async (req, res) => {
-  try {
-    const orders = await Order.find();
-    console.log(`📋 ${orders.length} ta buyurtma topildi`);
-    res.json(orders);
-  } catch (err) {
-    console.error("❌ Buyurtmalarni olishda xato:", err.message);
-    res.status(500).json({ error: "Buyurtmalarni olishda xato" });
-  }
-});
-
-// Buyurtmani o‘chirish
-app.delete("/api/orders/:id", async (req, res) => {
-  await Order.findByIdAndDelete(req.params.id);
-  res.json({ success: true });
-});
-
-// Tabrik qo‘shish
-app.post("/api/tabriklar", async (req, res) => {
-  try {
-    console.log("🎵 Yangi tabrik keldi:", req.body);
-    const tabrik = new Tabrik(req.body);
-    const savedTabrik = await tabrik.save();
-    console.log("✅ Tabrik saqlandi:", savedTabrik._id);
-    res.json(savedTabrik);
-  } catch (err) {
-    console.error("❌ Tabrik saqlashda xato:", err.message);
-    res.status(500).json({ error: "Tabrik qo'shilmadi: " + err.message });
-  }
-});
-
-// Tabriklarni olish
-app.get("/api/tabriklar", async (req, res) => {
-  try {
-    const tabriklar = await Tabrik.find().sort({ sana: -1 });
-    console.log(`🎵 ${tabriklar.length} ta tabrik topildi`);
-    res.json(tabriklar);
-  } catch (err) {
-    console.error("❌ Tabriklarni olishda xato:", err.message);
-    res.status(500).json({ error: "Tabriklarni olishda xato" });
-  }
-});
-
-// Tabrikni o'chirish
-app.delete("/api/tabriklar/:id", async (req, res) => {
-  try {
-    await Tabrik.findByIdAndDelete(req.params.id);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: "Tabrikni o'chirishda xato" });
-  }
-});
-
-// Tabrikni tahrirlash
-app.put("/api/tabriklar/:id", async (req, res) => {
-  try {
-    const { matn } = req.body;
-    const tabrik = await Tabrik.findByIdAndUpdate(
-      req.params.id,
-      { matn },
-      { new: true }
-    );
-    res.json(tabrik);
-  } catch (err) {
-    res.status(500).json({ error: "Tabrikni tahrirlaashda xato" });
-  }
-});
-
-// === Serverni ishga tushirish ===
-app.listen(PORT, () => {
-  console.log(`🚀 Server http://localhost:${PORT} da ishlayapti`);
-});
