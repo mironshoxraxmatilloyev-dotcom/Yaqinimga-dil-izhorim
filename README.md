@@ -105,3 +105,4 @@ This project is licensed under the ISC License.
 ---
 
 Made with ❤️ for Tabrik Xizmati"# Tabrik.com" 
+"# Tabrik.com" 
