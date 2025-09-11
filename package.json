@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server-simple.js",
+    "start": "node server.js",
     "dev": "node server.js",
     "test-server": "node server-test.js",
     "backup": "node backup.js",
