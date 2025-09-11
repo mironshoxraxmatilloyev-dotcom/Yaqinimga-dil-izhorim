@@ -1,108 +1,145 @@
-# 🎉 Tabrik Xizmati - Professional Greeting Service
+# Tabrik Xizmati - Professional Greeting Service
 
-A beautiful web application for professional greeting services in Uzbek language.
+Tabrik Xizmati - bu professional tabrik xizmatlari uchun web sayt.
 
-## 🌟 Features
+## 🚀 Quick Deploy
 
-- 🏠 **Home Page** - Welcome page with service overview
-- 📝 **Order Form** - Easy order placement system
-- 👥 **About Us** - Company information and contact details
-- 🎵 **Services** - Available greeting services
-- 🔐 **Admin Panel** - Order management and content administration
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/mironshoxraxmatilloyev-dotcom/Tabrik.com)
 
-## 🛠️ Technology Stack
+## 🌐 Live Demo
 
-- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB with Mongoose
-- **Styling**: Custom CSS with responsive design
+**Website:** [Tabrik Xizmati](https://tabrik-xizmati.onrender.com)
 
-## 🚀 Quick Start
+## 📋 Xususiyatlar
 
-### Local Development
+- 🎉 **Bosh sahifa** - Tabriklar ko'rish
+- 📝 **Buyurtma sahifasi** - Yangi buyurtma berish
+- 👨‍💼 **Admin sahifasi** - Buyurtmalar va tabriklarni boshqarish
+- 🗂️ **Biz haqimizda** - Kompaniya ma'lumotlari
+- 🛠️ **Xizmatlar** - Mavjud xizmatlar ro'yxati
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/tabrik-xizmati.git
-   cd tabrik-xizmati
-   ```
+## 🛠️ Texnologiyalar
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+- **Frontend:** HTML5, CSS3, Bootstrap 5, Vanilla JavaScript
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB Atlas
+- **Deployment:** Render.com
 
-3. **Start the server**
-   ```bash
-   npm start
-   ```
+## 🔧 Local Development
 
-4. **Open your browser**
-   ```
-   http://localhost:5000
-   ```
+### Talablar:
+- Node.js (16.0.0 yoki yuqori)
+- MongoDB Atlas account
 
-### Environment Variables
+### O'rnatish:
 
-Create a `.env` file in the root directory:
-
+1. **Repository ni klonlash:**
+```bash
+git clone https://github.com/mironshoxraxmatilloyev-dotcom/Tabrik.com.git
+cd Tabrik.com
 ```
-NODE_ENV=development
+
+2. **Dependencies o'rnatish:**
+```bash
+npm install
+```
+
+3. **Environment variables sozlash:**
+`.env` fayl yarating va quyidagilarni qo'shing:
+```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/tabriklar
+MONGODB_URI=your_mongodb_atlas_connection_string
+NODE_ENV=development
 ```
 
-## 📱 Pages
+4. **Serverni ishga tushirish:**
+```bash
+npm start
+```
 
-- **Home**: `/` or `/index.html`
-- **Order**: `/buyurtma.html`
-- **About**: `/bizhaqimizda.html`
-- **Services**: `/bizdamavjudxizmatlar.html`
-- **Admin**: `/admin.html`
+5. **Browser da ochish:**
+```
+http://localhost:5000
+```
 
-## 🔧 API Endpoints
+## 📦 Deployment
 
-- `GET /api/test` - Server health check
-- `POST /api/orders` - Create new order
-- `GET /api/orders` - Get all orders
-- `DELETE /api/orders/:id` - Delete order
-- `GET /api/tabriklar` - Get greetings
-- `POST /api/tabriklar` - Add greeting
+### Render.com da deploy qilish:
 
-## 👨‍💼 Admin Access
+#### 1-usul: Manual Deploy
+1. **[Render.com Dashboard](https://dashboard.render.com)** ga o'ting
+2. Sizning service ni toping
+3. **"Manual Deploy"** tugmasini bosing
+4. **"Deploy latest commit"** ni tanlang
 
-- **Login**: `admin`
-- **Password**: `12345678`
+#### 2-usul: Automatic Deploy
+1. **Service Settings** ga o'ting
+2. **"Auto-Deploy"** ni yoqing
+3. **Branch:** `main` ni tanlang
 
-## 🌐 Deployment
+#### 3-usul: Webhook
+```bash
+# GitHub repository settings
+# Webhooks > Add webhook
+# Payload URL: [Render webhook URL]
+# Content type: application/json
+```
 
-This project is ready for deployment on:
-- Render.com (recommended)
-- Vercel
-- Railway
-- Heroku
+### Environment Variables:
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+Render.com da quyidagi environment variable larni qo'shing:
 
-## 📞 Contact Information
+| Variable | Value |
+|----------|-------|
+| `MONGODB_URI` | `mongodb+srv://mironshox:D1WVdeVfthVP1Z2F@cluster0.zthjn1c.mongodb.net/tabrikDB?retryWrites=true&w=majority` |
+| `NODE_ENV` | `production` |
 
-- **Phone**: +998 50 502 08 40
-- **Telegram**: [@Muhiddinovna0840](https://t.me/Muhiddinovna0840)
-- **Price**: 40,000 som per greeting
+### Deployment holati tekshirish:
+- **Health Check:** `https://your-app.onrender.com/health`
+- **Debug:** Render logs ni ko'ring
 
-## 🤝 Contributing
+## 🔐 Admin Access
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- **Login:** admin
+- **Password:** 12345678
+
+## 📱 API Endpoints
+
+### Orders
+- `GET /api/orders` - Barcha buyurtmalarni olish
+- `POST /api/orders` - Yangi buyurtma yaratish
+- `DELETE /api/orders/:id` - Buyurtmani o'chirish
+
+### Media
+- `GET /api/media` - Barcha tabriklarni olish
+- `POST /api/media` - Yangi tabrik qo'shish
+- `PUT /api/media/:id` - Tabrikni yangilash
+- `DELETE /api/media/:id` - Tabrikni o'chirish
+
+### Health Check
+- `GET /health` - Server holati
+
+## 🐛 Troubleshooting
+
+### 502 Bad Gateway
+- Render.com logs ni tekshiring
+- Environment variables to'g'riligini tasdiqlang
+- MongoDB Atlas connection stringini tekshiring
+
+### MongoDB Connection Issues
+- Network Access da IP whitelist tekshiring
+- Database user credentials ni tasdiqlang
+- Connection string formatini tekshiring
+
+## 📞 Support
+
+Muammolar yuzaga kelsa, GitHub Issues bo'limida xabar qoldiring.
 
 ## 📄 License
 
-This project is licensed under the ISC License.
+MIT License
 
 ---
 
-Made with ❤️ for Tabrik Xizmati"# Tabrik.com" 
-"# Tabrik.com" 
+**Yaratuvchi:** Mironshox Raxmatilloyev
+**Email:** mironshoxraxmatilloyev@gmail.com
