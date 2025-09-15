@@ -8,12 +8,9 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     branch: main
+    region: frankfurt
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
         value: mongodb+srv://mironshox:D1WVdeVfthVP1Z2F@cluster0.zthjn1c.mongodb.net/tabrikDB?retryWrites=true&w=majority
-    disk:
-      name: tabrik-data
-      mountPath: /opt/render/project/src/uploads
-      sizeGB: 1
