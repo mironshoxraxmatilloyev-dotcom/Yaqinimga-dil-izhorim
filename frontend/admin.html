@@ -91,8 +91,8 @@ body {
 }
 
 .nav-link.active {
-  background: var(--accent-color) !important;
-  color: var(--text-dark) !important;
+  background: #ffc107 !important;
+  color: #000 !important;
   font-weight: 600;
 }
     .login {
@@ -488,12 +488,61 @@ body {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+
+    /* Navbar responsive improvements */
+    .navbar-toggler {
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 0.5rem;
+      background: transparent;
+    }
+    
+    .navbar-toggler:focus {
+      box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.25);
+      outline: none;
+    }
+    
+    .navbar-toggler:hover {
+      border-color: rgba(255,255,255,0.5);
+    }
+    
+    .navbar-collapse {
+      margin-top: 1rem;
+      background: rgba(0,0,0,0.1);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+    }
+    
+    @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+        margin-top: 0.5rem;
+        border-radius: 8px;
+      }
+      
+      .navbar-nav .nav-link {
+        color: #333 !important;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+      }
+      
+      .navbar-nav .nav-link:hover {
+        background: rgba(0,0,0,0.05);
+        border-radius: 4px;
+      }
+      
+      .navbar-nav .nav-link.active {
+        background: #ffc107 !important;
+        color: #000 !important;
+        border-radius: 4px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="box p-4">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger rounded">
       <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="index.html">🎉 Tabrik Xizmati</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
