@@ -223,7 +223,24 @@ app.put("/api/media/:id", async (req, res) => {
 
 // --- default route ---
 app.get("/", (req, res) => {
+  console.log("📄 Main page requested, serving index.html");
+  console.log("📂 Frontend directory:", path.join(__dirname, "frontend"));
+  console.log("📄 Index.html path:", path.join(__dirname, "frontend", "index.html"));
   res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
+
+// --- catch all routes for HTML pages ---
+app.get("/*.html", (req, res) => {
+  const fileName = req.path.substring(1); // Remove leading /
+  const filePath = path.join(__dirname, "frontend", fileName);
+  console.log("📄 Requested:", fileName);
+  console.log("📂 Full path:", filePath);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("❌ File not found:", filePath);
+      res.status(404).send("File not found");
+    }
+  });
 });
 
 // --- health check ---
