@@ -3,13 +3,13 @@ services:
     name: tabrik-xizmati
     env: node
     plan: free
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    buildCommand: npm install
+    startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true
     branch: main
     region: frankfurt
-    rootDir: .
+    rootDir: backend
     envVars:
       - key: NODE_ENV
         value: production
