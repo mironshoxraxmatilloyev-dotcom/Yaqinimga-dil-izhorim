@@ -9,7 +9,6 @@ services:
     autoDeploy: true
     branch: main
     region: frankfurt
-    rootDir: backend
     envVars:
       - key: NODE_ENV
         value: production
